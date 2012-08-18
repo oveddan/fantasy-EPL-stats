@@ -6,7 +6,7 @@ var request = require('request'),
 var getCurrentSummaryStats = module.exports.getCurrentSummaryStats = function(callback){
   var currentSummaryStats = [],
     currentPage = 1,
-    maxPages = 2;
+    maxPages = 12;
 
   async.whilst(
     function () { return currentPage <= maxPages;  },

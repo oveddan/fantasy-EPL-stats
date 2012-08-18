@@ -10,9 +10,12 @@ var saveSummaryStats = module.exports.saveSummaryStats = function(stats, callbac
       db.collection('summarystats', function(err, collection) {
         if(err) callback(err); 
         else {
+          var insertedAt = new Date();
           var insert = function(stat, callback){
             console.log('inserting:');
             console.log(stat);
+
+            stat.insertedAt = insertedAt;
             collection.insert(stat, function(err){
               if(err) callback(err); else {
                 console.log('inserted:');

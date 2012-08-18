@@ -98,7 +98,7 @@ var parseCells = module.exports.parseCells = function(row){
       lastname : $cells[2].innerHTML,
       team : image.title,
       position : $cells[4].innerHTML,
-      selectedBy : parseFloat($cells[5].innerHTML) * 0.01,
+      selectedBy : parseFloat($cells[5].innerHTML),
       // remove dollar and make float
       price : parseFloat($cells[6].innerHTML.substr(1, $cells[6].innerHTML.length - 1)),
       gwPoints : parseInt($cells[7].innerHTML),

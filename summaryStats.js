@@ -40,14 +40,16 @@ var pullSummaryStatsOfPage = function(page, callback){
 }
 
 var parseStatsFromHtml = module.exports.parseStatsFromHtml = function(pageHtml){
-  var $playerRows = $(pageHtml).find('.ismTable').find('tr');
+  var $allRows = $(pageHtml).find('.ismTable').first().find('tr'),
+    // filter out first row which is header row
+    $playerRows = _.rest($allRows, 1);
 
   var pagePlayerStats = _.map($playerRows, parseCells);
   
   return pagePlayerStats;
 }
 
-var parseCells = module.exports.parseCells = function($row){
+var parseCells = module.exports.parseCells = function(row){
   /*Header looks like: 
     <th></th>
                 <th></th>
@@ -84,7 +86,9 @@ var parseCells = module.exports.parseCells = function($row){
       8<td>0</td>
     </tr>
     <tr>*/
-    var $cells = $row.find('td'),
+    var rowNum = 0;
+    var $row = $(row),
+      $cells = $row.children('td');
       image = $cells.find('img.ismShirtData')[0],
       detailsLink = $cells.find('a.ismViewProfile')[0],
       linkTarget = detailsLink.href;

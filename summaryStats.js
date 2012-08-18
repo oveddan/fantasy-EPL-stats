@@ -15,7 +15,7 @@ var pullStats = function(page, callback){
       callback(parsedStats);
     }
   });
-};
+}
 
 var parseStatsFromHtml = module.exports.parseStatsFromHtml = function(pageHtml){
   var $playerRows = $(pageHtml).find('#ismTable').find('tr');  
@@ -35,13 +35,13 @@ var parceCells = module.exports.parceCells = function($cells){
                 <th><abbr title="Total points">Total</abbr></th>*/
   // cells look like:
     /*<tr>
-      <td>
+      <td>0
         <img src="http://cdn.ismfg.net/static/plfpl/img/shirts/data_view/shirt_19.png"
           alt="West Ham"
           title="West Ham"
           class="ismShirtData">
       </td>
-      <td>
+      <td>1
         <a href="#502" class="ismInfo ismViewProfile" title="">
           <img src="http://cdn.ismfg.net/static/plfpl/img/icons/infoposs_75.png"
               alt="Player information "
@@ -49,30 +49,31 @@ var parceCells = module.exports.parceCells = function($cells){
               height="16">
         </a>
       </td>
-      <td>Nolan</td>
+      2<td>Nolan</td>
 
-      <td>WHM</td>
-      <td>MID</td>
-      <td>3.9%</td>
-      <td>£6.0</td>
-      <td>0</td>
-      <td>0</td>
+      3<td>WHM</td>
+      4<td>MID</td>
+      5<td>3.9%</td>
+      6<td>£6.0</td>
+      7<td>0</td>
+      8<td>0</td>
     </tr>
     <tr>*/
     
-    var image = $cells[0].find('img.ismShirtData')[0],
-      detailsLink = $cells[1].find('a.ismViewProfile')[0];
+    var image = $cells.find('img.ismShirtData')[0],
+      detailsLink = $cells.find('a.ismViewProfile')[0],
+      linkTarget = detailsLink.href;
 
     var stat = {
-      idonsite = detailsLink.href.substr(1, detailsLink.href.length - 1),
-      lastname = $cells[2].innerText,
-      team = image.title,
-      position = $cells[3].innerText,
-      selectedBy = parseFloat($cells[4].innerText),
+      idonsite : linkTarget.substring(linkTarget.indexOf('#') + 1, linkTarget.length),
+      lastname : $cells[2].innerHTML,
+      team : image.title,
+      position : $cells[4].innerHTML,
+      selectedBy : parseFloat($cells[5].innerHTML) * 0.01,
       // remove dollar and make float
-      price = parseFloat($cells[5].innerText.substr(1, $cells[5].innerText.length - 1)),
-      gwPoints = parseInt($cells[6].innerText),
-      totalPoints = parseInt($cells[7].innerText)
+      price : parseFloat($cells[6].innerHTML.substr(1, $cells[6].innerHTML.length - 1)),
+      gwPoints : parseInt($cells[7].innerHTML),
+      totalPoints : parseInt($cells[8].innerHTML)
     };
 
     return stat;

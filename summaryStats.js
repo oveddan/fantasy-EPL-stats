@@ -14,8 +14,9 @@ var getCurrentSummaryStats = module.exports.getCurrentSummaryStats = function(ca
       pullSummaryStatsOfPage(currentPage, function(err, playerStats){
         if(err) callback(err);
         else {
-          currentSummaryStats.push(playerStats);
+          currentSummaryStats = currentSummaryStats.concat(playerStats);
           currentPage++;
+          callback();
         }
       })
     },
@@ -26,9 +27,9 @@ var getCurrentSummaryStats = module.exports.getCurrentSummaryStats = function(ca
 };
 
 var pullSummaryStatsOfPage = function(page, callback){
-  var requestUrl = "http://fantasy.premierleague.com/stats/elements/?page=" + 1;
+  var requestUrl = "http://fantasy.premierleague.com/stats/elements/?page=" + page;
   console.log('requesting from ' + requestUrl);
-  request("http://fantasy.premierleague.com/stats/elements/?page=" + 1, function(err, response, body){
+  request(requestUrl, function(err, response, body){
     if(err) callback(err);
     else {
       var parsedStats = parseStatsFromHtml(body);

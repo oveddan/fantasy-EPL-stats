@@ -26,7 +26,7 @@ describe('parseCells', function(){
         totalPoints : 122
       };
     // TEST
-    var actualStat = summaryStats.parceCells($(htmlToParse).children('td'));
+    var actualStat = summaryStats.parseCells($(htmlToParse));
     // SHOULD
     actualStat.should.eql(expectedStat);
   });

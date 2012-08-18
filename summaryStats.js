@@ -3,26 +3,51 @@ var request = require('request'),
   async = require('async'),
   _ = require('underscore');
 
-module.exports.extract2012SummaryStats = function(){
+var getCurrentSummaryStats = module.exports.getCurrentSummaryStats = function(callback){
+  var currentSummaryStats = [],
+    currentPage = 1,
+    maxPages = 2;
 
+  async.whilst(
+    function () { return currentPage <= maxPages;  },
+    function(callback) {
+      pullSummaryStatsOfPage(currentPage, function(err, playerStats){
+        if(err) callback(err);
+        else {
+          currentSummaryStats.push(playerStats);
+          currentPage++;
+        }
+      })
+    },
+    function(err){
+      callback(err, currentSummaryStats);
+    }
+  );
 };
 
-var pullStats = function(page, callback){
-  request("http://fantasy.premierleague.com/stats/elements/?page=" + 1, function(err, data){
+var pullSummaryStatsOfPage = function(page, callback){
+  var requestUrl = "http://fantasy.premierleague.com/stats/elements/?page=" + 1;
+  console.log('requesting from ' + requestUrl);
+  request("http://fantasy.premierleague.com/stats/elements/?page=" + 1, function(err, response, body){
     if(err) callback(err);
     else {
-      var parsedStats = parseStatsFromHtml(data);
-      callback(parsedStats);
+      var parsedStats = parseStatsFromHtml(body);
+      console.log('calling back with');
+      console.log(parsedStats);
+      callback(null, parsedStats);
     }
   });
 }
 
 var parseStatsFromHtml = module.exports.parseStatsFromHtml = function(pageHtml){
-  var $playerRows = $(pageHtml).find('#ismTable').find('tr');  
-  var pagePlayerStats = _.map($playerRows.children('td'), parseCells);
+  var $playerRows = $(pageHtml).find('.ismTable').find('tr');
+
+  var pagePlayerStats = _.map($playerRows, parseCells);
+  
+  return pagePlayerStats;
 }
 
-var parceCells = module.exports.parceCells = function($cells){
+var parseCells = module.exports.parseCells = function($row){
   /*Header looks like: 
     <th></th>
                 <th></th>
@@ -59,8 +84,8 @@ var parceCells = module.exports.parceCells = function($cells){
       8<td>0</td>
     </tr>
     <tr>*/
-    
-    var image = $cells.find('img.ismShirtData')[0],
+    var $cells = $row.find('td'),
+      image = $cells.find('img.ismShirtData')[0],
       detailsLink = $cells.find('a.ismViewProfile')[0],
       linkTarget = detailsLink.href;
 
